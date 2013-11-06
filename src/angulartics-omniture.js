@@ -1,6 +1,7 @@
 /**
  * @license Angulartics v0.8.5
  * (c) 2013 Luis Farzati http://luisfarzati.github.io/angulartics
+ * Contributed by https://github.com/alex87/
  * License: MIT
  */
 (function (angular) {
