@@ -42,8 +42,8 @@ angular.module('angulartics', [])
   var bufferedPageTrack = function (path) {
     cache.pageviews.push(path);
   };
-  var bufferedEventTrack = function (event, properties) {
-    cache.events.push({name: event, properties: properties});
+  var bufferedEventTrack = function (event, properties, e) {
+    cache.events.push({name: event, properties: properties, event:e});
   };
 
   var api = {
@@ -123,8 +123,10 @@ angular.module('angulartics', [])
         }
       });
 
-      angular.element($element[0]).bind(eventType, function () {
-        $analytics.eventTrack(eventName, properties);
+      angular.element($element[0]).bind(eventType, function (e) {
+          console.log('angulartics! element : ');
+          console.log(e);
+        $analytics.eventTrack(eventName, properties, e);
       });
     }
   };
