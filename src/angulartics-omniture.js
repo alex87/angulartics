@@ -1,7 +1,6 @@
 /**
  * @license Angulartics v0.8.5
  * (c) 2013 Luis Farzati http://luisfarzati.github.io/angulartics
- * Contributed by https://github.com/alex87/
  * License: MIT
  */
 (function (angular) {
@@ -35,23 +34,42 @@
             });
 
             angulartics.waitForVendorApi('s', 500, function (s) {
-                $analyticsProvider.registerEventTrack(function (action, properties) {
+                $analyticsProvider.registerEventTrack(function (action, properties, event) {
                     //_kmq.push(['record', action, properties]);
                     console.log('OMMNITURE TRACK EVENT ' + action + properties);
                     console.log(properties);
+                    console.log(event);
                     console.log('---------------------------------------------');
 
-                    if (angular.isDefined(properties)) {
+                    if (angular.isDefined(properties) && angular.isDefined(properties.type)) {
+                        console.log('------ OMNITURE - track via properties -----------');
                         if (properties.type == 'contextData') {
-                            s.contextData[properties.key] = properties.value;
-                            s.t();
-                        } else if (properties.type == "formEvent") {
-                            // todo add form event tracking
-
+                            console.log('------ OMNITURE - track context data -----------');
+                            console.log(properties);
+                            if(angular.isDefined(properties.subKey)){
+                                if(angular.isUndefined(s.contextData[properties.key])){
+                                    s.contextData[properties.key] = {};
+                                }
+                                s.contextData[properties.key][properties.subKey] = properties.value;
+                            }else{
+                                s.contextData[properties.key] = properties.value;
+                            }
+                            if(angular.isUndefined(properties.wait)){
+                                s.t();
+                            }
                         }
                     } else {
-                        s.events = action;
-                        s.t();
+                        if(action == "formEvent"){
+                            if(angular.isDefined(event.currentTarget.form.name) && angular.isDefined(event.currentTarget.name)){
+                                var o = event.currentTarget.form.name + ":"+event.currentTarget.name;
+                                console.log("OMNITURE LOG FORM CHANGE to : "  + o);
+                                s.prop19 = o;
+                                s.t();
+                            }
+                        }else{
+                            s.events = action;
+                            s.t();
+                        }
                     }
 
                 });
